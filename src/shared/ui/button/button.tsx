@@ -1,5 +1,5 @@
 import { ComponentPropsWithoutRef, forwardRef } from 'react'
-import { cn } from '../../lib'
+import { cn } from '@/shared/lib'
 
 type Props = {} & ComponentPropsWithoutRef<'button'>
 
