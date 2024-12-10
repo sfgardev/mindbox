@@ -1,8 +1,10 @@
+import { Todos } from '@/widgets/todos'
+
 function App() {
   return (
-    <>
-      <h1 className='bg-sky-300'>Hello</h1>
-    </>
+    <div className="h-dvh content-center">
+      <Todos />
+    </div>
   )
 }
 
