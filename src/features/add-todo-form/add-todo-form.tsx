@@ -2,13 +2,13 @@ import { ChangeEvent, ComponentPropsWithoutRef, ElementRef, FormEvent, forwardRe
 import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
 import { cn } from '@/shared/lib'
+import { useTodosContext } from '@/entities/todo/providers'
 
-type Props = {
-  onAddTodo: (title: string) => void
-} & ComponentPropsWithoutRef<'form'>
+type Props = {} & ComponentPropsWithoutRef<'form'>
 
-export const AddTodoForm = forwardRef<ElementRef<'form'>, Props>(({ className, onAddTodo, ...props }, ref) => {
+export const AddTodoForm = forwardRef<ElementRef<'form'>, Props>(({ className, ...props }, ref) => {
   const [enteredText, setEnteredText] = useState('')
+  const { addTodo } = useTodosContext()
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEnteredText(event.target.value)
@@ -16,7 +16,7 @@ export const AddTodoForm = forwardRef<ElementRef<'form'>, Props>(({ className, o
 
   const handleAddTodo = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    onAddTodo(enteredText)
+    addTodo(enteredText)
     setEnteredText('')
   }
 

@@ -1,13 +1,9 @@
 import { TodoItem } from '@/features/todo-list/todo-item.tsx'
-import { TodoModel } from '@/entities/todo/model'
+import { useTodosContext } from '@/entities/todo/providers'
 
-type Props = {
-  todos: TodoModel[]
-  onToggleTodo: (id: string) => void
-  onDeleteTodo: (id: string) => void
-}
+export const TodoList = () => {
+  const { todos, deleteTodo, toggleTodoStatus } = useTodosContext()
 
-export const TodoList = ({ todos, onToggleTodo, onDeleteTodo }: Props) => {
   if (todos.length === 0) return <h2 className="text-2xl text-center font-medium">No todos yet...</h2>
 
   return (
@@ -18,8 +14,8 @@ export const TodoList = ({ todos, onToggleTodo, onDeleteTodo }: Props) => {
           id={todo.id}
           title={todo.title}
           isCompleted={todo.isCompleted}
-          onDeleteTodo={onDeleteTodo}
-          onToggleTodo={onToggleTodo}
+          onDeleteTodo={deleteTodo}
+          onToggleTodo={toggleTodoStatus}
         />
       ))}
     </ul>
