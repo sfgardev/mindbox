@@ -1,11 +1,15 @@
 import { createContext, PropsWithChildren, useContext, useState } from 'react'
 import { TodoModel } from '@/entities/todo/model'
+import { TodosFilterModel } from '@/entities/todo/model/todos-filter-model.ts'
 
 type TodosContextValue = {
   todos: TodoModel[]
+  todosFilter: TodosFilterModel
   addTodo: (title: string) => void
   toggleTodoStatus: (todoId: string) => void
   deleteTodo: (todoId: string) => void
+  changeTodosFilter: (filter: TodosFilterModel) => void
+  clearCompletedTodos: () => void
 }
 
 const TodosContext = createContext<TodosContextValue | null>(null)
@@ -15,6 +19,8 @@ export const TodosProvider = ({ children }: PropsWithChildren) => {
     const localStorageTodos = localStorage.getItem('todos')
     return localStorageTodos ? JSON.parse(localStorageTodos) : []
   })
+
+  const [todosFilter, setTodosFilter] = useState<TodosFilterModel>('all')
 
   const addTodo = (title: string) => {
     const newTodo: TodoModel = {
@@ -48,11 +54,32 @@ export const TodosProvider = ({ children }: PropsWithChildren) => {
     })
   }
 
+  const changeTodosFilter = (filter: TodosFilterModel) => {
+    setTodosFilter(filter)
+  }
+
+  const clearCompletedTodos = () => {
+    setTodos((prevState) => prevState.filter((todo) => !todo.isCompleted))
+  }
+
+  const filterTodos = () => {
+    const dict: Record<TodosFilterModel, TodoModel[]> = {
+      all: todos,
+      completed: todos.filter((todo) => todo.isCompleted),
+      'not completed': todos.filter((todo) => !todo.isCompleted),
+    }
+
+    return dict[todosFilter]
+  }
+
   const contextValue = {
-    todos,
+    todos: filterTodos(),
+    todosFilter,
     addTodo,
     toggleTodoStatus,
     deleteTodo,
+    changeTodosFilter,
+    clearCompletedTodos,
   }
 
   return <TodosContext.Provider value={contextValue}>{children}</TodosContext.Provider>
