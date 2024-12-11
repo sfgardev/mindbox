@@ -6,7 +6,7 @@ import { useLocalStorage } from '@/shared/hooks'
 type TodosContextValue = {
   todos: TodoModel[]
   todosFilter: TodosFilterModel
-  addTodo: (title: string) => void
+  addTodo: (title: string, id?: string) => void
   toggleTodoStatus: (todoId: string) => void
   deleteTodo: (todoId: string) => void
   changeTodosFilter: (filter: TodosFilterModel) => void
@@ -19,9 +19,9 @@ export const TodosProvider = ({ children }: PropsWithChildren) => {
   const [todos, setTodos] = useLocalStorage<TodoModel[]>('todos', [])
   const [todosFilter, setTodosFilter] = useLocalStorage<TodosFilterModel>('filter', 'all')
 
-  const addTodo = (title: string) => {
+  const addTodo = (title: string, id: string = crypto.randomUUID()) => {
     const newTodo: TodoModel = {
-      id: crypto.randomUUID(),
+      id,
       isCompleted: false,
       title,
     }
