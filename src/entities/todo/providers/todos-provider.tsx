@@ -20,7 +20,10 @@ export const TodosProvider = ({ children }: PropsWithChildren) => {
     return localStorageTodos ? JSON.parse(localStorageTodos) : []
   })
 
-  const [todosFilter, setTodosFilter] = useState<TodosFilterModel>('all')
+  const [todosFilter, setTodosFilter] = useState<TodosFilterModel>(() => {
+    const localStorageFilter = localStorage.getItem('filter')
+    return localStorageFilter ? JSON.parse(localStorageFilter) : 'all'
+  })
 
   const addTodo = (title: string) => {
     const newTodo: TodoModel = {
@@ -56,10 +59,15 @@ export const TodosProvider = ({ children }: PropsWithChildren) => {
 
   const changeTodosFilter = (filter: TodosFilterModel) => {
     setTodosFilter(filter)
+    localStorage.setItem('filter', JSON.stringify(filter))
   }
 
   const clearCompletedTodos = () => {
-    setTodos((prevState) => prevState.filter((todo) => !todo.isCompleted))
+    setTodos((prevState) => {
+      const updatedTodos = prevState.filter((todo) => !todo.isCompleted)
+      localStorage.setItem('todos', JSON.stringify(updatedTodos))
+      return updatedTodos
+    })
   }
 
   const filterTodos = () => {

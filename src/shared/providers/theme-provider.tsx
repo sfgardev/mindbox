@@ -10,7 +10,10 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 export const ThemeProvider = ({ children }: PropsWithChildren) => {
-  const [theme, setTheme] = useState<Theme>('system')
+  const [theme, setTheme] = useState<Theme>(() => {
+    const localStorageTheme = localStorage.getItem('theme') as Theme
+    return localStorageTheme ?? 'system'
+  })
 
   useEffect(() => {
     const root = window.document.documentElement
@@ -29,6 +32,7 @@ export const ThemeProvider = ({ children }: PropsWithChildren) => {
 
   const toggleTheme = (theme: Theme) => {
     setTheme(theme)
+    localStorage.setItem('theme', theme)
   }
 
   const contextValue = { theme, toggleTheme }
