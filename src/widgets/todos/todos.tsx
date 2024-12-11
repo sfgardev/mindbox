@@ -5,8 +5,8 @@ import { ToggleTheme } from '@/features/toggle-theme'
 
 export const Todos = () => {
   return (
-    <div className="w-1/3 mx-auto p-8 flex flex-col gap-8 rounded-xl border bg-card text-card-foreground shadow">
-      <ToggleTheme className='self-end' />
+    <div className="max-w-xl mx-auto p-8 flex flex-col gap-8 rounded-xl border bg-card text-card-foreground shadow">
+      <ToggleTheme className="self-end" />
       <AddTodoForm />
       <TodoList />
       <TodosFooter />

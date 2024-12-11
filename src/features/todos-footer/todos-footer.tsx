@@ -7,7 +7,7 @@ export const TodosFooter = () => {
   const notCompletedTodosCount = todos.filter((todo) => !todo.isCompleted).length
 
   return (
-    <footer className="flex justify-between items-center">
+    <footer className="flex justify-between flex-col items-center gap-2 sm:flex-row">
       <div>{notCompletedTodosCount} items left</div>
       <TodosFilter todosFilter={todosFilter} onChangeTodosFilter={changeTodosFilter} />
       <button onClick={clearCompletedTodos}>Clear completed</button>
