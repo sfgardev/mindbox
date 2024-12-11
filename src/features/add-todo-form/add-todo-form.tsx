@@ -16,13 +16,13 @@ export const AddTodoForm = forwardRef<ElementRef<'form'>, Props>(({ className, .
 
   const handleAddTodo = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    addTodo(enteredText)
+    addTodo(enteredText.trim())
     setEnteredText('')
   }
 
   return (
     <form ref={ref} className={cn('flex flex-col gap-4', className)} onSubmit={handleAddTodo} {...props}>
-      <Input value={enteredText} onChange={handleChange} />
+      <Input value={enteredText} onChange={handleChange} required />
       <Button>Add todo</Button>
     </form>
   )
