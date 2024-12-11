@@ -1,4 +1,5 @@
-import { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react'
+import { createContext, PropsWithChildren, useContext, useEffect } from 'react'
+import { useLocalStorage } from '@/shared/hooks'
 
 type Theme = 'light' | 'dark' | 'system'
 
@@ -10,10 +11,7 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null)
 
 export const ThemeProvider = ({ children }: PropsWithChildren) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const localStorageTheme = localStorage.getItem('theme') as Theme
-    return localStorageTheme ?? 'system'
-  })
+  const [theme, setTheme] = useLocalStorage<Theme>('theme', 'system')
 
   useEffect(() => {
     const root = window.document.documentElement
@@ -32,7 +30,6 @@ export const ThemeProvider = ({ children }: PropsWithChildren) => {
 
   const toggleTheme = (theme: Theme) => {
     setTheme(theme)
-    localStorage.setItem('theme', theme)
   }
 
   const contextValue = { theme, toggleTheme }

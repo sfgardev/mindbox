@@ -1,6 +1,7 @@
-import { createContext, PropsWithChildren, useContext, useState } from 'react'
+import { createContext, PropsWithChildren, useContext } from 'react'
 import { TodoModel } from '@/entities/todo/model'
 import { TodosFilterModel } from '@/entities/todo/model/todos-filter-model.ts'
+import { useLocalStorage } from '@/shared/hooks'
 
 type TodosContextValue = {
   todos: TodoModel[]
@@ -15,15 +16,8 @@ type TodosContextValue = {
 const TodosContext = createContext<TodosContextValue | null>(null)
 
 export const TodosProvider = ({ children }: PropsWithChildren) => {
-  const [todos, setTodos] = useState<TodoModel[]>(() => {
-    const localStorageTodos = localStorage.getItem('todos')
-    return localStorageTodos ? JSON.parse(localStorageTodos) : []
-  })
-
-  const [todosFilter, setTodosFilter] = useState<TodosFilterModel>(() => {
-    const localStorageFilter = localStorage.getItem('filter')
-    return localStorageFilter ? JSON.parse(localStorageFilter) : 'all'
-  })
+  const [todos, setTodos] = useLocalStorage<TodoModel[]>('todos', [])
+  const [todosFilter, setTodosFilter] = useLocalStorage<TodosFilterModel>('filter', 'all')
 
   const addTodo = (title: string) => {
     const newTodo: TodoModel = {
@@ -32,29 +26,17 @@ export const TodosProvider = ({ children }: PropsWithChildren) => {
       title,
     }
 
-    setTodos((prevTodos) => {
-      const updatedTodos = [...prevTodos, newTodo]
-      localStorage.setItem('todos', JSON.stringify(updatedTodos))
-      return updatedTodos
-    })
+    setTodos((prevTodos) => [...prevTodos, newTodo])
   }
 
   const toggleTodoStatus = (todoId: string) => {
-    setTodos((prevTodos) => {
-      const updatedTodos = prevTodos.map((todo) =>
-        todo.id === todoId ? { ...todo, isCompleted: !todo.isCompleted } : todo
-      )
-      localStorage.setItem('todos', JSON.stringify(updatedTodos))
-      return updatedTodos
-    })
+    setTodos((prevTodos) =>
+      prevTodos.map((todo) => (todo.id === todoId ? { ...todo, isCompleted: !todo.isCompleted } : todo))
+    )
   }
 
   const deleteTodo = (todoId: string) => {
-    setTodos((prevTodos) => {
-      const updatedTodos = prevTodos.filter((todo) => todo.id !== todoId)
-      localStorage.setItem('todos', JSON.stringify(updatedTodos))
-      return updatedTodos
-    })
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== todoId))
   }
 
   const changeTodosFilter = (filter: TodosFilterModel) => {
@@ -63,21 +45,18 @@ export const TodosProvider = ({ children }: PropsWithChildren) => {
   }
 
   const clearCompletedTodos = () => {
-    setTodos((prevState) => {
-      const updatedTodos = prevState.filter((todo) => !todo.isCompleted)
-      localStorage.setItem('todos', JSON.stringify(updatedTodos))
-      return updatedTodos
-    })
+    setTodos((prevTodos) => prevTodos.filter((todo) => !todo.isCompleted))
   }
 
   const filterTodos = () => {
-    const dict: Record<TodosFilterModel, TodoModel[]> = {
-      all: todos,
-      completed: todos.filter((todo) => todo.isCompleted),
-      'not completed': todos.filter((todo) => !todo.isCompleted),
+    switch (todosFilter) {
+      case 'completed':
+        return todos.filter((todo) => todo.isCompleted)
+      case 'not completed':
+        return todos.filter((todo) => !todo.isCompleted)
+      default:
+        return todos
     }
-
-    return dict[todosFilter]
   }
 
   const contextValue = {
